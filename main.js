@@ -10,6 +10,7 @@ var edges = [];
 var faces = [];
 var polygons = [];
 var mode = 1;
+var temporalVertex = [];
 
 function initGL() {
   let canvas = document.querySelector('#webgl');
@@ -77,6 +78,29 @@ function render() {
       edge.renderVertices(gl);
     }
   })
+  
+  let before;
+  let count = 0;
+  for (let key in temporalVertex) {
+    vertex = temporalVertex[key];
+    vertex.render(gl);
+    if (count != 0) {
+      renderLine([[before.getX(), before.getY()], [vertex.getX(), vertex.getY()]]);
+    }
+    count += 1;
+    before = vertex;
+  }
+  // let tempCoor = [];
+  // temporalVertex.forEach((vertex) => {
+  //   tempCoor.concat(vertex.getCoordinate());
+  //   console.log("DIDALAM " + tempCoor);
+  //   vertex.render(gl);
+  // })
+  // console.log("DSINI COK " + tempCoor);
+  // renderLine(tempCoor);
+
+  // temporalVertex.forEach((vertex) =>{
+  // })
   polygons.forEach((polygon) => {
     polygon.render(gl);
     if(polygon.getId() == state["id"] && state["selected"] == "square"){
@@ -141,8 +165,34 @@ function initInput(){
           break;
         }
       }
+    } else if(state["drawpolygon"]){ // drawing state
+      if ((Math.abs(state["start"][0] - mousePos.x) < 2 ) && Math.abs((state["start"][1] - mousePos.y) < 2)) { // done drawing
+        if (temporalVertex.length >= 3) { 
+          let poly = new Polygon(temporalVertex);
+          polygons.push(poly);
+          state["tools"] = tools[1];
+        } else {
+          temporalVertex = [];
+        }
+        delete state["start"];
+        delete state["drawpolygon"];
+        delete state["tempvertex"];
+      } else {
+        temporalVertex.push(new Vertex(mousePos.x, mousePos.y));
+        state["tempvertex"] = [mousePos.x, mousePos.y];
+      
+      }
+      render();
+    }else if (state["tools"] == tools[4]) { // start drawing state
+      temporalVertex = [new Vertex(mousePos.x, mousePos.y)];
+      state["tempvertex"] = [mousePos.x, mousePos.y];
+      state["drawpolygon"] = true;
+
+      state["start"] = [mousePos.x, mousePos.y];
+      render();
     }
     console.log(state);
+    console.log(temporalVertex);
   })
 
   gl.canvas.addEventListener("mousedown", ev => {
@@ -268,6 +318,11 @@ function initInput(){
       let line = state["tempvertex"].concat([x, y + d, x + d, y + d, x + d, y]) 
       console.log(line);
       renderLineLoop(line);
+      render();
+    }
+    else if(state["tools"] == tools[4] && state["drawpolygon"]){
+      let line = state["tempvertex"].concat([mousePos.x, mousePos.y]) 
+      renderLine(line);
       render();
     }
     else if(state["tools"] == tools[1] && state["selected"] == "line" && state["dragvertex"]){

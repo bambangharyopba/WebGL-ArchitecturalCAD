@@ -11,6 +11,7 @@ var faces = [];
 var polygons = [];
 var mode = 1;
 var temporalVertex = [];
+var temporalEdge = [];
 
 function initGL() {
   let canvas = document.querySelector('#webgl');
@@ -72,6 +73,7 @@ function main(){
 }
 
 function render() {
+  temporalEdge = [];
   edges.forEach((edge) => {
     edge.render(gl);
     if(edge.getId() == state["id"] && state["selected"] == "line"){
@@ -85,11 +87,15 @@ function render() {
     vertex = temporalVertex[key];
     vertex.render(gl);
     if (count != 0) {
-      renderLine([[before.getX(), before.getY()], [vertex.getX(), vertex.getY()]]);
+      temporalEdge.push(new Edge(before, vertex))
     }
     count += 1;
     before = vertex;
   }
+
+  temporalEdge.forEach((edge) => {
+    edge.render(gl);
+  })
   // let tempCoor = [];
   // temporalVertex.forEach((vertex) => {
   //   tempCoor.concat(vertex.getCoordinate());
@@ -153,6 +159,7 @@ function initInput(){
   gl.canvas.addEventListener("click", ev =>{
     let mousePos = input().getMousePos(gl.canvas, ev);
     if(isOnTools(mousePos.x, mousePos.y)){
+      temporalVertex =[];
       for(let i = 1; i < 5; i++){
         if(state["tools"] == tools[i]){
           if(i == 5 - 1){
@@ -166,14 +173,14 @@ function initInput(){
         }
       }
     } else if(state["drawpolygon"]){ // drawing state
-      if ((Math.abs(state["start"][0] - mousePos.x) < 2 ) && Math.abs((state["start"][1] - mousePos.y) < 2)) { // done drawing
+      if ((Math.abs(state["start"][0] - mousePos.x) < 5 ) && Math.abs((state["start"][1] - mousePos.y) < 5)) { // done drawing
         if (temporalVertex.length >= 3) { 
           let poly = new Polygon(temporalVertex);
           polygons.push(poly);
           state["tools"] = tools[1];
-        } else {
-          temporalVertex = [];
+          
         }
+        temporalVertex = [];
         delete state["start"];
         delete state["drawpolygon"];
         delete state["tempvertex"];
@@ -197,111 +204,123 @@ function initInput(){
 
   gl.canvas.addEventListener("mousedown", ev => {
     let mousePos = input().getMousePos(gl.canvas, ev);
-    if(state["tools"] == tools[2]){
-      state["tempvertex"] = [mousePos.x, mousePos.y];
-      state["makeline"] = true;
-    }
-    else if(state["tools"] == tools[3]){
-      state["tempvertex"] = [mousePos.x, mousePos.y];
-      state["makesquare"] = true;
-    }
-    else if(state["tools"] == tools[1] && state['selected'] == "line" && state.hasOwnProperty("id")){
-      let idx = -1;
-      for(let i = 0; i < edges.length; i++){
-        if(edges[i].getId() == state["id"]){
-          idx = i;
-          break;
-        }
+    if (!isOnTools(mousePos.x, mousePos.y)){
+      if(state["tools"] == tools[2]){
+        state["tempvertex"] = [mousePos.x, mousePos.y];
+        state["makeline"] = true;
       }
-      if(idx != -1){
-        if(edges[idx].getV1().isInCoordinate(mousePos.x, mousePos.y)){
-          state["dragvertex"] = true;
-          state["vertex"] = "v1"; 
-        }
-        else if(edges[idx].getV2().isInCoordinate(mousePos.x, mousePos.y)){
-          state["dragvertex"] = true;
-          state["vertex"] = "v2"; 
-        }
-        else{
-          let found = false;
-          for(let i = 0; i < edges.length; i++){
-            if(edges[i].isInCoordinate(mousePos.x, mousePos.y)){
-              state["selected"] = "line";
-              state["id"] = edges[i].getId();
-              found = true;
-              break;
-            }
-          }
-          if(!found){
-            delete state["selected"];
-            delete state["id"];
-          }
-        }
-        
+      else if(state["tools"] == tools[3]){
+        state["tempvertex"] = [mousePos.x, mousePos.y];
+        state["makesquare"] = true;
       }
-      render();
-    }
-    else if(state["tools"] == tools[1] && state['selected'] == "square" && state.hasOwnProperty("id")){
-      let idx = -1;
-      for(let i = 0; i < polygons.length; i++){
-        if(polygons[i].getId() == state["id"]){
-          idx = i;
-          break;
-        }
-      }
-      if(idx != -1){
-        let vert = polygons[idx].getVertices();
-        let vidx = -1;
-        for(let j = 0; j < vert.length; j++){
-          if(vert[j].isInCoordinate(mousePos.x, mousePos.y)){
-            vidx = j;
+      else if(state["tools"] == tools[1] && state['selected'] == "line" && state.hasOwnProperty("id")){
+        let idx = -1;
+        for(let i = 0; i < edges.length; i++){
+          if(edges[i].getId() == state["id"]){
+            idx = i;
             break;
           }
         }
-        if(vidx != -1){
-          state["dragvertex"] = true;
-          state["vertex"] = vidx;
+        if(idx != -1){
+          if(edges[idx].getV1().isInCoordinate(mousePos.x, mousePos.y)){
+            state["dragvertex"] = true;
+            state["vertex"] = "v1"; 
+          }
+          else if(edges[idx].getV2().isInCoordinate(mousePos.x, mousePos.y)){
+            state["dragvertex"] = true;
+            state["vertex"] = "v2"; 
+          }
+          else{
+            let found = false;
+            for(let i = 0; i < edges.length; i++){
+              if(edges[i].isInCoordinate(mousePos.x, mousePos.y)){
+                state["selected"] = "line";
+                state["id"] = edges[i].getId();
+                found = true;
+                break;
+              }
+            }
+            if(!found){
+              delete state["selected"];
+              delete state["id"];
+            }
+          }
+          
         }
-        else{
-          let found = false;
-          for(let i = 0; i < polygons.length; i++){
-            if(polygons[i].isInCoordinate(mousePos.x, mousePos.y)){
-              state["selected"] = "square";
-              state["id"] = polygons[i].getId();
-              found = true;
+        render();
+      }
+      else if(state["tools"] == tools[1] && state['selected'] == "square" && state.hasOwnProperty("id")){
+        let idx = -1;
+        for(let i = 0; i < polygons.length; i++){
+          if(polygons[i].getId() == state["id"]){
+            idx = i;
+            break;
+          }
+        }
+        if(idx != -1){
+          let vert = polygons[idx].getVertices();
+          let vidx = -1;
+          for(let j = 0; j < vert.length; j++){
+            if(vert[j].isInCoordinate(mousePos.x, mousePos.y)){
+              vidx = j;
               break;
             }
           }
-          if(!found){
-            delete state["selected"];
-            delete state["id"];
+          if(vidx != -1){
+            state["dragvertex"] = true;
+            state["vertex"] = vidx;
+          }
+          else{
+            let found = false;
+            for(let i = 0; i < polygons.length; i++){
+              if(polygons[i].isInCoordinate(mousePos.x, mousePos.y)){
+                state["selected"] = "square";
+                state["id"] = polygons[i].getId();
+                found = true;
+                break;
+              }
+            }
+            if(!found){
+              delete state["selected"];
+              delete state["id"];
+            }
           }
         }
+        render();
       }
-      render();
+      else if(state["tools"] == tools[1] && !isOnTools(mousePos.x, mousePos.y)){
+        for(let i = 0; i < edges.length; i++){
+          if(edges[i].isInCoordinate(mousePos.x, mousePos.y)){
+            state["selected"] = "line";
+            state["id"] = edges[i].getId();
+          }
+        }
+        for(let i = 0; i < polygons.length; i++){
+          if(polygons[i].isInCoordinate(mousePos.x, mousePos.y)){
+            delete state["selected"];
+            if (polygons[i].getType() === 1) {
+              state["selected"] = "square";
+            } else {
+              console.log(polygons[i].getType())  
+              state["selected"] = "polygon";
+            }
+            state["id"] = polygons[i].getId();
+          }
+        }
+        for(let i = 0; i < faces.length; i++){
+          if(faces[i].isInCoordinate(mousePos.x, mousePos.y)){
+            if (typeof(polygons[i]) === "square") {
+              state["selected"] = "square";
+            } else {
+              state["selected"] = "polygon";
+            }
+            state["id"] = faces[i].getId();
+          }
+        }
+        render();
+      }
+      console.log(state);
     }
-    else if(state["tools"] == tools[1] && !isOnTools(mousePos.x, mousePos.y)){
-      for(let i = 0; i < edges.length; i++){
-        if(edges[i].isInCoordinate(mousePos.x, mousePos.y)){
-          state["selected"] = "line";
-          state["id"] = edges[i].getId();
-        }
-      }
-      for(let i = 0; i < polygons.length; i++){
-        if(polygons[i].isInCoordinate(mousePos.x, mousePos.y)){
-          state["selected"] = "square";
-          state["id"] = polygons[i].getId();
-        }
-      }
-      for(let i = 0; i < faces.length; i++){
-        if(faces[i].isInCoordinate(mousePos.x, mousePos.y)){
-          state["selected"] = "square";
-          state["id"] = faces[i].getId();
-        }
-      }
-      render();
-    }
-    console.log(state);
   })
 
   gl.canvas.addEventListener("mousemove", ev => {
@@ -394,49 +413,50 @@ function initInput(){
   })
 
   gl.canvas.addEventListener("mouseup", ev => {
-    if(state["tools"] == tools[2] && state["makeline"]){
-      let mousePos = input().getMousePos(gl.canvas, ev);
-      let x1 = state["tempvertex"][0];
-      let y1 = state["tempvertex"][1];
-      let x2 = mousePos.x;
-      let y2 = mousePos.y;
-      if(x1 != x2 && y1 != y2){
-        let edge = new Edge(new Vertex(x1, y1), new Vertex(x2, y2));
-        edges.push(edge);
-        state["tools"] = tools[1];
-        state["selected"] = "line";
-        state["id"] = edge.getId();
+    let mousePos = input().getMousePos(gl.canvas, ev);
+    if (! isOnTools(mousePos.x, mousePos.y)){
+      if(state["tools"] == tools[2] && state["makeline"]){
+        let x1 = state["tempvertex"][0];
+        let y1 = state["tempvertex"][1];
+        let x2 = mousePos.x;
+        let y2 = mousePos.y;
+        if(x1 != x2 && y1 != y2){
+          let edge = new Edge(new Vertex(x1, y1), new Vertex(x2, y2));
+          edges.push(edge);
+          state["tools"] = tools[1];
+          state["selected"] = "line";
+          state["id"] = edge.getId();
+        }
+        delete state["tempvertex"];
+        delete state["makeline"];
+        render();
       }
-      delete state["tempvertex"];
-      delete state["makeline"];
-      render();
-    }
-    if(state["tools"] == tools[3] && state["makesquare"]){
-      let mousePos = input().getMousePos(gl.canvas, ev);
-      let x = state["tempvertex"][0];
-      let y = state["tempvertex"][1];
-      let d =  (Math.abs(mousePos.y - y) > Math.abs(mousePos.x - x)) ? mousePos.y - y : mousePos.x - x; 
-      if(d != 0){
-        let v = new Vertex(x, y);
-        let square = new Square(v, d);
-        polygons.push(square);
-        state["tools"] = tools[1];
-        state["selected"] = "square";
-        state["id"] = square.getId();
+      if(state["tools"] == tools[3] && state["makesquare"]){
+        let x = state["tempvertex"][0];
+        let y = state["tempvertex"][1];
+        let d =  (Math.abs(mousePos.y - y) > Math.abs(mousePos.x - x)) ? mousePos.y - y : mousePos.x - x; 
+        if(d != 0){
+          let v = new Vertex(x, y);
+          let square = new Square(v, d);
+          polygons.push(square);
+          state["tools"] = tools[1];
+          state["selected"] = "square";
+          state["id"] = square.getId();
+        }
+        delete state["tempvertex"];
+        delete state["makesquare"];
+        render();
       }
-      delete state["tempvertex"];
-      delete state["makesquare"];
-      render();
-    }
-    else if(state["tools"] == tools[1] && state["selected"] == "line" && state["dragvertex"]){
-      delete state["dragvertex"];
-      delete state["vertex"];
-      render();
-    }
-    else if(state["tools"] == tools[1] && state["selected"] == "square" && state["dragvertex"]){
-      delete state["dragvertex"];
-      delete state["vertex"];
-      render();
+      else if(state["tools"] == tools[1] && state["selected"] == "line" && state["dragvertex"]){
+        delete state["dragvertex"];
+        delete state["vertex"];
+        render();
+      }
+      else if(state["tools"] == tools[1] && state["selected"] == "square" && state["dragvertex"]){
+        delete state["dragvertex"];
+        delete state["vertex"];
+        render();
+      }
     }
   })
 }

@@ -117,10 +117,13 @@ class Edge {
 }
 
 class Polygon{
-    constructor(vertices){
+    constructor(vertices, type = 0){
         this.vertices = vertices;
         this.id = polygonId;
+        polygonId += 1;
+        this.type = type; // 0 polygon, 1 square
     }
+    getType() {return this.type}
     getId(){return this.id}
     getVertices(){return this.vertices}
     getCoordinate(){
@@ -190,7 +193,7 @@ class Polygon{
         let x = vertex.getX();
         let y = vertex.getY();
         let _vertices = [vertex, new Vertex(x, y + size), new Vertex(x + size, y + size), new Vertex(x + size, y)];
-        super(_vertices);
+        super(_vertices, 1);
     }
     scale(scale){
         this.vertices.forEach(vertex =>{

@@ -189,10 +189,7 @@ class Polygon{
  }
 
  class Square extends Polygon{
-    constructor(vertex, size){
-        let x = vertex.getX();
-        let y = vertex.getY();
-        let _vertices = [vertex, new Vertex(x, y + size), new Vertex(x + size, y + size), new Vertex(x + size, y)];
+    constructor(_vertices){
         super(_vertices, 1);
     }
     scale(scale){

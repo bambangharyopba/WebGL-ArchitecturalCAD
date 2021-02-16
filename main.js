@@ -157,6 +157,56 @@ function isOnTools(x, y){
 }
 
 function initInput(){
+  const fileSelector = document.getElementById('load');
+  
+  fileSelector.addEventListener("change", (ev) => {
+    const file = ev.target.files;
+    (async () => {
+      var thenedPromise = file[0].text().then(text => {
+        edges = [];
+        polygons = [];
+        let token = text.split("\n");
+        token = token.slice(0,token.length - 1);
+        let load_mode = 0;
+        let vert = [];
+        for(let i = 0; i < token.length; i++){
+          console.log("token: " + token[i])
+          if(token[i] == "Edge"){
+            load_mode = 0;
+          } else if(token[i] == "Square"){
+            load_mode = 1;
+          } else if(token[i] == "Polygon"){
+            load_mode = 2;
+          } else if(token[i] == "}"){
+            console.log("vertices")
+            console.log(vert);
+            if(load_mode == 0){
+              edges.push(new Edge(vert[0], vert[1]));
+            } else if(load_mode == 1){
+              polygons.push(new Square(vert));
+            } else if(load_mode == 2){
+              polygons.push(new Polygon(vert));
+            }
+            vert = [];
+          } else if(token[i] != "{"){
+            let coor = token[i].split(",");
+            console.log(coor);
+            var tex = new Vertex(parseInt(coor[0]), parseInt(coor[1]));
+            console.log(tex)
+            vert.push(tex);
+            console.log(vert);
+          }
+        }
+      });
+
+      await thenedPromise;
+
+      console.log(edges);
+      console.log(polygons);
+      render();
+    })();
+  });
+
   gl.canvas.addEventListener("click", ev =>{
     let mousePos = input().getMousePos(gl.canvas, ev);
     if(isOnTools(mousePos.x, mousePos.y)){
@@ -245,8 +295,8 @@ function initInput(){
         let y = state["tempvertex"][1];
         let d =  (Math.abs(mousePos.y - y) > Math.abs(mousePos.x - x)) ? mousePos.y - y : mousePos.x - x; 
         if(d != 0){
-          let v = new Vertex(x, y);
-          let square = new Square(v, d);
+          let vertices = [new Vertex(x,y), new Vertex(x, y + d), new Vertex(x + d, y + d), new Vertex(x + d, y)];
+          let square = new Square(vertices);
           polygons.push(square);
           state["tools"] = tools[1];
           state["selected"] = "square";
@@ -449,6 +499,65 @@ function initInput(){
       }
     }
   })
+}
+
+function save(){
+  let data = "";
+  if(edges.length > 0){
+    data = "Edge\n";
+    edges.forEach((edge) =>{
+      let coordinate = edge.getCoordinate();
+      data += "{\n";
+      for(let i = 0; i < coordinate.length; i += 2){
+        data += coordinate[i].toString() + "," + coordinate[i+1].toString() + "\n";
+      }
+      data += "}\n";
+    })
+  }
+  if(polygons.length > 0){
+    data += "Square\n";
+    polygons.forEach((polygon) =>{
+      if(polygon.getType() == 1){
+        let coordinate = polygon.getCoordinate();
+        data += "{\n";
+        for(let i = 0; i < coordinate.length; i += 2){
+          data += coordinate[i].toString() + "," + coordinate[i+1].toString() + "\n";
+        }
+        data += "}\n";
+      }
+    })
+    data += "Polygon\n";
+    polygons.forEach((polygon) =>{
+      if(polygon.getType() == 0){
+        let coordinate = polygon.getCoordinate();
+        data += "{\n";
+        for(let i = 0; i < coordinate.length; i += 2){
+          data += coordinate[i].toString() + "," + coordinate[i+1].toString() + "\n";
+        }
+        data += "}\n";
+      }
+    })
+  }
+
+  download(data, "webgl-snapshot.txt", "text");
+}
+
+function download(data, filename, type) {
+  var file = new Blob([data], {type: type});
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+      window.navigator.msSaveOrOpenBlob(file, filename);
+  else { // Others
+      var a = document.createElement("a"),
+              url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);  
+      }, 0); 
+  }
 }
 
 function randomInt(range) {

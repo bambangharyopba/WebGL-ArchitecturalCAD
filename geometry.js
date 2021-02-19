@@ -122,6 +122,14 @@ class Polygon{
         this.id = polygonId;
         polygonId += 1;
         this.type = type; // 0 polygon, 1 square
+        this.red = Math.random();
+        this.green = Math.random();
+        this.blue = Math.random();
+    }
+    setColor(r, g, b) {
+        this.red = r;
+        this.green = g;
+        this.blue = b;
     }
     getType() {return this.type}
     getId(){return this.id}
@@ -142,7 +150,7 @@ class Polygon{
         }
         return found
     }
-    render(gl){
+    render(gl, colorLocation){
         var triangleData = [];
         for(var i = 1; i < this.vertices.length-1; i ++){
             triangleData.push(this.vertices[0].getX());
@@ -152,9 +160,9 @@ class Polygon{
             triangleData.push(this.vertices[i + 1].getX());
             triangleData.push(this.vertices[i + 1].getY());
         }
-        console.log("Hellow ini dsni : ");
-        console.log(triangleData);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleData), gl.STATIC_DRAW);
+        gl.uniform4f(colorLocation, this.red, this.green, this.blue, 1);
+        
         gl.drawArrays(gl.TRIANGLES, 0, triangleData.length);
     }
     renderVertices(gl){
@@ -162,6 +170,7 @@ class Polygon{
             vertex.render(gl);
         })
     }
+
 }
  
 class Square extends Polygon{

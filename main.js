@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', main);
 
-var gl, shader;
+var gl, shader, colorLocation;
 
 const tools = {1: "SELECT", 2: "DRAW LINE", 3: "DRAW SQUARE", 4: "DRAW POLYGON"}
 
@@ -37,7 +37,7 @@ function main(){
 
   var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution")
 
-  var colorLocation = gl.getUniformLocation(program, "u_color");
+  colorLocation = gl.getUniformLocation(program, "u_color");
 
   var positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -108,7 +108,7 @@ function render() {
   // temporalVertex.forEach((vertex) =>{
   // })
   polygons.forEach((polygon) => { // render polygons
-    polygon.render(gl);
+    polygon.render(gl, colorLocation);
     if(polygon.getId() == state["id"] && (state["selected"] == "square" || state["selected"] == "polygon")){ // render selected vertices
       polygon.renderVertices(gl);
     }

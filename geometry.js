@@ -163,43 +163,8 @@ class Polygon{
         })
     }
 }
- class Face {
-    constructor(vertices){
-       this.vertices = vertices;
-       this.id = faceId;
-       faceId++;
-    }
-    getId(){return this.id}
-    getVertices(){return this.vertices}
-    setVertices(vertices){this.vertices = vertices}
-    getCoordinate(){
-        let coordinate = []
-        this.vertices.forEach(vertice =>{
-            coordinate = coordinate.concat(vertice.getCoordinate());
-        });
-        return coordinate;
-    }
-    isInCoordinate(x, y){
-        let found = false;
-        for(let i = 0; i < this.vertices.length; i++){
-            if(isInLine(x, y, this.vertices[i], this.vertices[(i+1) >= this.vertices.length ? 0 : i+1])){
-                found = true;
-            }
-        }
-        return found
-    }
-    render(gl){
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.getCoordinate()), gl.STATIC_DRAW);
-        gl.drawArrays(gl.LINE_LOOP, 0, this.vertices.length);
-    }
-    renderVertices(gl){
-        this.vertices.forEach(vertex =>{
-            vertex.render(gl);
-        })
-    }
- }
-
- class Square extends Polygon{
+ 
+class Square extends Polygon{
     constructor(_vertices){
         super(_vertices, 1);
     }
@@ -209,8 +174,4 @@ class Polygon{
         })
     }
 
- }
-
- class Object{
-     
- }
+}

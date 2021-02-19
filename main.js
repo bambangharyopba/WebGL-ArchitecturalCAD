@@ -7,7 +7,6 @@ const tools = {1: "SELECT", 2: "DRAW LINE", 3: "DRAW SQUARE", 4: "DRAW POLYGON"}
 var state = {"tools": tools[2]};
 var vertices = [];
 var edges = [];
-var faces = [];
 var polygons = [];
 var mode = 1;
 var temporalVertex = [];
@@ -114,12 +113,6 @@ function render() {
       polygon.renderVertices(gl);
     }
   })
-  // faces.forEach((face) => {
-  //   face.render(gl);
-  //   if(face.getId() == state["id"] && state["selected"] == "square"){
-  //     face.renderVertices(gl);
-  //   }
-  // })
   renderTools();
 }
 
@@ -248,17 +241,7 @@ function initInput(){
             state["id"] = polygons[i].getId();
           }
         }
-        // for(let i = 0; i < faces.length; i++){
-        //   if(faces[i].isInCoordinate(mousePos.x, mousePos.y)){
-        //     if(found) break;
-        //     if (typeof(polygons[i]) === "square") {
-        //       state["selected"] = "square";
-        //     } else {
-        //       state["selected"] = "polygon";
-        //     }
-        //     state["id"] = faces[i].getId();
-        //   }
-        // }
+        
         render();
       } else if(state["tools"] == tools[2]){ // start line drawing state
         state["tempvertex"] = [mousePos.x, mousePos.y];

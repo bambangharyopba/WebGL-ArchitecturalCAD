@@ -143,8 +143,19 @@ class Polygon{
         return found
     }
     render(gl){
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.getCoordinate()), gl.STATIC_DRAW);
-        gl.drawArrays(gl.LINE_LOOP, 0, this.vertices.length);
+        var triangleData = [];
+        for(var i = 1; i < this.vertices.length-1; i ++){
+            triangleData.push(this.vertices[0].getX());
+            triangleData.push(this.vertices[0].getY());
+            triangleData.push(this.vertices[i].getX());
+            triangleData.push(this.vertices[i].getY());
+            triangleData.push(this.vertices[i + 1].getX());
+            triangleData.push(this.vertices[i + 1].getY());
+        }
+        console.log("Hellow ini dsni : ");
+        console.log(triangleData);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleData), gl.STATIC_DRAW);
+        gl.drawArrays(gl.TRIANGLES, 0, triangleData.length);
     }
     renderVertices(gl){
         this.vertices.forEach(vertex =>{

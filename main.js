@@ -525,6 +525,30 @@ function save(){
   download(data, "webgl-snapshot.txt", "text");
 }
 
+function changeColor() {
+  var colorValue = document.getElementById('colorValue').value;
+  if(state["selected"] == "square" || state["selected"] == "polygon") {
+    if (colorValue.length !== 6) {
+      alert("Invalid Input");
+    } else {
+      // var red = colorValue[0] + colorValue[1];
+      // var green = colorValue[2] + colorValue[3];
+      // var blue = colorValue[4] + colorValue[5];
+      // console.log(colorValue);
+      var red = parseInt(red = colorValue[0] + colorValue[1], 16) / 255.0;
+      var green = parseInt(colorValue[2] + colorValue[3], 16) / 255.0;
+      var blue = parseInt(colorValue[4] + colorValue[5], 16) / 255.0;
+      console.log("red" + red +"  Blue "+ blue + " Green: "+green);
+      if ((red > 1.0 || red < 0.0) || (green > 1.0 || green < 0.0) || (blue > 1.0 || blue < 0.0)) {
+        alert("Invalid Input");
+      } else {
+        polygons[state["id"]].setColor(red, green, blue);
+        render();
+      }
+    }
+  }
+}
+
 function download(data, filename, type) {
   var file = new Blob([data], {type: type});
   if (window.navigator.msSaveOrOpenBlob) // IE10+

@@ -96,17 +96,7 @@ function render() {
   temporalEdge.forEach((edge) => {
     edge.render(gl);
   })
-  // let tempCoor = [];
-  // temporalVertex.forEach((vertex) => {
-  //   tempCoor.concat(vertex.getCoordinate());
-  //   console.log("DIDALAM " + tempCoor);
-  //   vertex.render(gl);
-  // })
-  // console.log("DSINI COK " + tempCoor);
-  // renderLine(tempCoor);
 
-  // temporalVertex.forEach((vertex) =>{
-  // })
   polygons.forEach((polygon) => { // render polygons
     polygon.render(gl, colorLocation);
     if(polygon.getId() == state["id"] && (state["selected"] == "square" || state["selected"] == "polygon")){ // render selected vertices
@@ -531,19 +521,15 @@ function changeColor() {
     if (colorValue.length !== 6) {
       alert("Invalid Input");
     } else {
-      // var red = colorValue[0] + colorValue[1];
-      // var green = colorValue[2] + colorValue[3];
-      // var blue = colorValue[4] + colorValue[5];
-      // console.log(colorValue);
       var red = parseInt(red = colorValue[0] + colorValue[1], 16) / 255.0;
       var green = parseInt(colorValue[2] + colorValue[3], 16) / 255.0;
       var blue = parseInt(colorValue[4] + colorValue[5], 16) / 255.0;
       console.log("red" + red +"  Blue "+ blue + " Green: "+green);
-      if ((red > 1.0 || red < 0.0) || (green > 1.0 || green < 0.0) || (blue > 1.0 || blue < 0.0)) {
-        alert("Invalid Input");
-      } else {
+      if ((red <= 1.0 && red >= 0.0) && (green <= 1.0 && green >= 0.0) && (blue <= 1.0 && blue >= 0.0)) {
         polygons[state["id"]].setColor(red, green, blue);
         render();
+      } else {
+        alert("Invalid Input");
       }
     }
   }

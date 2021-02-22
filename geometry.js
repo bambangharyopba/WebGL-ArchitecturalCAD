@@ -122,9 +122,9 @@ class Polygon{
         this.id = polygonId;
         polygonId += 1;
         this.type = type; // 0 polygon, 1 square
-        this.red = Math.random();
-        this.green = Math.random();
-        this.blue = Math.random();
+        this.red = 0;
+        this.green = 0;
+        this.blue = 0;
     }
     setColor(r, g, b) {
         this.red = r;

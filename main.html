@@ -8,11 +8,11 @@
 </head>
 <html>
     <body>
+        <button onclick="help()">Help</button>
         <button onclick="save()">Save</button>
         <input type="file" id="load">
         <button onclick="changeColor()">Change Color</button>
         <input type="text" id="colorValue">
-        <button onclick="help()">Help</button>
         <div id="help" style="display:none">
             <p>Help Menu</p>
 
@@ -115,9 +115,7 @@
                 <ol>
                     <li>Gunakan tool select</li>
                     <li>Select poligon dengan cara menekan garis luar dari poligon atau salah satu titik sudut poligon yang diinginkan</li>
-                    <li>Masukkan warna ke text field di sebelah kanan tombol “color change” dengan warna dengan format hex. Contoh : “FF0000” untuk mengubah warna menjadi merah</li>
-                    <li>Lalu tekan tombol “color change”</li>
-                    <li>Jika terjadi kesalahan pada input warna maka akan terlihat pesan kesalahan</li>
+                    <li>Drag salah satu titik yang diinginkan ke posisi yang diinginkan untuk mengubah ukuran poligon</li>
                 </ol>
             </div>
 

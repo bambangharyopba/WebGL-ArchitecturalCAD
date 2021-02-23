@@ -75,7 +75,7 @@ function render() {
   // Render all edges for all objects
   temporalEdge = [];
   edges.forEach((edge) => { // render edges
-    edge.render(gl);
+    edge.render(gl, colorLocation);
     if(edge.getId() == state["id"] && state["selected"] == "line"){ // render selected vertices
       edge.renderVertices(gl);
     }
@@ -152,6 +152,7 @@ function initInput(){
         token = token.slice(0,token.length - 1);
         let load_mode = 0;
         let vert = [];
+        let rgb = [];
         for(let i = 0; i < token.length; i++){
           console.log("token: " + token[i])
           if(token[i] == "Edge"){
@@ -166,18 +167,30 @@ function initInput(){
             if(load_mode == 0){
               edges.push(new Edge(vert[0], vert[1]));
             } else if(load_mode == 1){
-              polygons.push(new Square(vert));
+              var square = new Square(vert);
+              square.setColor(rgb[0], rgb[1], rgb[2]);
+              polygons.push(square);
             } else if(load_mode == 2){
-              polygons.push(new Polygon(vert));
+              var polygon = new Polygon(vert);
+              polygon.setColor(rgb[0], rgb[1], rgb[2]);
+              polygons.push(polygon);
             }
             vert = [];
+            rgb = [];
           } else if(token[i] != "{"){
-            let coor = token[i].split(",");
-            console.log(coor);
-            var tex = new Vertex(parseInt(coor[0]), parseInt(coor[1]));
-            console.log(tex)
-            vert.push(tex);
-            console.log(vert);
+            let value = token[i].split(",");
+            if (value.length === 3) {
+              rgb.push(parseFloat(value[0]));
+              rgb.push(parseFloat(value[1]));
+              rgb.push(parseFloat(value[2]));
+            } else {
+              let coor = token[i].split(",");
+              console.log(coor);
+              var tex = new Vertex(parseInt(coor[0]), parseInt(coor[1]));
+              console.log(tex)
+              vert.push(tex);
+              console.log(vert);
+            }
           }
         }
       });
@@ -496,6 +509,8 @@ function save(){
         for(let i = 0; i < coordinate.length; i += 2){
           data += coordinate[i].toString() + "," + coordinate[i+1].toString() + "\n";
         }
+        let colors = polygon.getColor(); 
+        data += colors[0].toString() + "," + colors[1].toString() + "," + colors[2].toString() + "\n";
         data += "}\n";
       }
     })
@@ -507,6 +522,8 @@ function save(){
         for(let i = 0; i < coordinate.length; i += 2){
           data += coordinate[i].toString() + "," + coordinate[i+1].toString() + "\n";
         }
+        let colors = polygon.getColor(); 
+        data += colors[0].toString() + "," + colors[1].toString() + "," + colors[2].toString() + "\n";
         data += "}\n";
       }
     })

@@ -106,8 +106,9 @@ class Edge {
     isInCoordinate(x, y){
         return isInLine(x, y, this.v1, this.v2);
     }
-    render(gl){
+    render(gl, colorLocation){
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.v1.getCoordinate().concat(this.v2.getCoordinate())), gl.STATIC_DRAW);
+        gl.uniform4f(colorLocation, 0, 0, 0, 1);
         gl.drawArrays(gl.LINES, 0, 2);
     }
     renderVertices(gl){
@@ -126,6 +127,11 @@ class Polygon{
         this.green = 0;
         this.blue = 0;
     }
+
+    getColor() {
+        return [this.red, this.green, this.blue];
+    }
+
     setColor(r, g, b) {
         this.red = r;
         this.green = g;

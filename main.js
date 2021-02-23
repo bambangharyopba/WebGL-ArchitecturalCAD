@@ -65,7 +65,7 @@ function main(){
 
   gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-  gl.uniform4f(colorLocation, Math.random(), Math.random(),Math.random(), 1);
+  gl.uniform4f(colorLocation, 0, 0, 0, 1);
 
   initInput();
   render();

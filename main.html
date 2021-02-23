@@ -12,6 +12,144 @@
         <input type="file" id="load">
         <button onclick="changeColor()">Change Color</button>
         <input type="text" id="colorValue">
+        <button onclick="help()">Help</button>
+        <div id="help" style="display:none">
+            <p>Help Menu</p>
+
+            <div id="help-menu" onload="helpItem(0)">
+                <button onclick="helpItem(0)">Draw Line</button>
+                <button onclick="helpItem(1)">Draw Square</button>
+                <button onclick="helpItem(2)">Draw Polygon</button>
+                <button onclick="helpItem(3)">Change Line Length</button>
+                <button onclick="helpItem(4)">Change Square Size</button>
+                <button onclick="helpItem(5)">Change Polygon Vertex</button>
+                <button onclick="helpItem(6)">Change Square Color</button>
+                <button onclick="helpItem(7)">Change Polygon Size</button>
+                <button onclick="helpItem(8)">Change Polygon Color</button>
+                <button onclick="helpItem(9)">Save</button>
+                <button onclick="helpItem(10)">Load</button>
+            </div>
+            <br>
+
+            <div class="help-item" id="0">
+                Menggambar line<br>
+                Berikut adalah step untuk menggambar line:<br>
+                <ol>
+                    <li>Gunakan tool line</li>
+                    <li>Klik layar pada posisi yang diinginkan untuk memulai menggambar</li>
+                    <li>Gerakan mouse ke posisi yang diinginkan untuk melihat line yang akan terbentuk</li>
+                    <li>Klik layar untuk menggambar line </li>
+                    <li>Jika ingin membatalkan penggambaran maka klik bagian tool untuk mengganti tool, jika terdapat sisa penggambaran, maka klik layar untuk  menghilangkannya (disarankan menggunakan tool select)</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="1" style="display:none">
+                Menggambar persegi<br>
+                Berikut adalah step untuk menggambar persegi:<br>
+                <ol>
+                    <li>Gunakan tool persegi</li>
+                    <li>Klik layar pada posisi yang diinginkan untuk menggambar satu sudut persegi</li>
+                    <li>Gerakan mouse ke posisi persegi untuk melihat ukuran persegi yang akan digambar</li>
+                    <li>Klik layar pada posisi yang diinginkan untuk menggambar persegi</li>
+                    <li>Jika ingin membatalkan penggambaran maka klik bagian tool untuk mengganti tool, jika terdapat sisa penggambaran, maka klik layar untuk  menghilangkannya (disarankan menggunakan tool select)</li>
+                </ol>
+            </div>
+            
+            <div class="help-item" id="2" style="display:none">
+                Menggambar Poligon<br>
+                Berikut adalah step untuk menggambar poligon:<br>
+                <ol>
+                    <li>Gunakan tool poligon</li>
+                    <li>Klik layar pada posisi yang diinginkan untuk menggambar sebuah titik</li>
+                    <li>Lanjutkan proses ini untuk membentuk poligon yang diinginkan</li>
+                    <li>Pastikan titik terakhir poligon sama dengan titik awal poligon</li>
+                    <li>Jika ingin membatalkan penggambaran maka klik bagian tool untuk mengganti tool, jika terdapat sisa penggambaran, maka klik layar untuk  menghilangkannya (disarankan menggunakan tool select)</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="3" style="display:none">
+                Mengubah panjang line<br>
+                Berikut adalah step untuk mengubah panjang dari line:<br>
+                <ol>
+                    <li>Gunakan tool select</li>
+                    <li>Select line dengan cara menekan line yang diinginkan</li>
+                    <li>Drag salah satu titik yang diinginkan ke posisi yang diinginkan</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="4" style="display:none">
+                Mengubah ukuran persegi<br>
+                Berikut adalah step untuk mengubah ukuran dari persegi:<br>
+                <ol>
+                    <li>Gunakan tool select</li>
+                    <li>Select persegi dengan cara menekan garis luar dari persegi atau salah satu titik sudut persegi yang diinginkan</li>
+                    <li>Drag salah satu titik yang diinginkan ke posisi yang diinginkan</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="5" style="display:none">
+                Mengubah titik dari poligon<br>
+                Berikut adalah step untuk mengubah titik dari poligon:<br>
+                <ol>
+                    <li>Gunakan tool select</li>
+                    <li>Select poligon dengan cara menekan garis luar dari poligon atau salah satu titik sudut poligon yang diinginkan</li>
+                    <li>Drag salah satu titik yang diinginkan ke posisi yang diinginkan</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="6" style="display:none">
+                Mengubah warna persegi<br>
+                Berikut adalah step untuk mengubah warna persegi:<br>
+                <ol>
+                    <li>Gunakan tool select</li>
+                    <li>Select persegi dengan cara menekan garis luar dari persegi atau salah satu titik sudut persegi yang diinginkan</li>
+                    <li>Masukkan warna ke text field di sebelah kanan tombol “color change” dengan warna dengan format hex. Contoh : “FF0000” untuk mengubah warna menjadi merah</li>
+                    <li>Lalu tekan tombol “color change”</li>
+                    <li>Jika terjadi kesalahan pada input warna maka akan terlihat pesan kesalahan</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="7" style="display:none">
+                Mengubah ukuran poligon<br>
+                Berikut adalah step untuk mengubah warna poligon:<br>
+                <ol>
+                    <li>Gunakan tool select</li>
+                    <li>Select poligon dengan cara menekan garis luar dari poligon atau salah satu titik sudut poligon yang diinginkan</li>
+                    <li>Masukkan warna ke text field di sebelah kanan tombol “color change” dengan warna dengan format hex. Contoh : “FF0000” untuk mengubah warna menjadi merah</li>
+                    <li>Lalu tekan tombol “color change”</li>
+                    <li>Jika terjadi kesalahan pada input warna maka akan terlihat pesan kesalahan</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="8" style="display:none">
+                Mengubah warna poligon<br>
+                Berikut adalah step untuk mengubah warna poligon:<br>
+                <ol>
+                    <li>Gunakan tool select</li>
+                    <li>Select poligon dengan cara menekan garis luar dari poligon atau salah satu titik sudut poligon yang diinginkan</li>
+                    <li>Masukkan warna ke text field di sebelah kanan tombol “color change” dengan warna dengan format hex. Contoh : “FF0000” untuk mengubah warna menjadi merah</li>
+                    <li>Lalu tekan tombol “color change”</li>
+                    <li>Jika terjadi kesalahan pada input warna maka akan terlihat pesan kesalahan</li>
+                </ol>
+            </div>
+
+            <div class="help-item" id="9" style="display:none">
+                Menyimpan model<br>
+                Berikut adalah step untuk menyimpan hasil penggambaran model:<br>
+                <ol>
+                    <li>Klik tombol save</li>
+                </ol>
+            </div>
+            
+            <div class="help-item" id="10" style="display:none">
+                Membuka file model<br>
+                Berikut adalah step untuk membuka file model:<br>
+                <ol>
+                    <li>Klik tombol “Choose File”</li>
+                    <li>Pilih file dari model tersebut</li>
+                </ol>   
+            </div>         
+        </div>
         <canvas id="webgl"></canvas>
     </body>
 </html>

@@ -588,3 +588,23 @@ function setRectangle(gl, x, y, width, height) {
      x2, y2,
   ]), gl.STATIC_DRAW);
 }
+
+function help(){
+  var x = document.getElementById("help");
+  if (x.style.display === "none") {
+    x.style.display = "block";
+  } else {
+    x.style.display = "none";
+  }
+}
+
+function helpItem(number){
+  var x = document.getElementsByClassName("help-item");
+  for(let i = 0; i < x.length; i++){
+    if(i == number){
+      x.item(i).style.display = "block";
+    } else {
+      x.item(i).style.display = "none";
+    }
+  }
+}

@@ -169,7 +169,7 @@ class Polygon{
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleData), gl.STATIC_DRAW);
         gl.uniform4f(colorLocation, this.red, this.green, this.blue, 1);
         
-        gl.drawArrays(gl.TRIANGLES, 0, triangleData.length);
+        gl.drawArrays(gl.TRIANGLES, 0, triangleData.length/2);
     }
     renderVertices(gl){
         this.vertices.forEach(vertex =>{

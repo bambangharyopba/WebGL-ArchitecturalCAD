@@ -204,10 +204,21 @@ function initInput(){
   });
 
   // TODO: Tools
+  document.getElementById("select-btn").addEventListener("click", function() {
+    temporalVertex =[];
+    state = {};
+    state["tools"] = tools[1];
+    document.getElementById("select-btn").disabled = true;
+    document.getElementById("line-btn").disabled = false;
+    document.getElementById("square-btn").disabled = false;
+    document.getElementById("poly-btn").disabled = false; 
+    document.getElementById("status").innerHTML = "Status: Select & Edit";
+  });
   document.getElementById("line-btn").addEventListener("click", function() {
     temporalVertex =[];
     state = {};
     state["tools"] = tools[2];
+    document.getElementById("select-btn").disabled = false;
     document.getElementById("line-btn").disabled = true;
     document.getElementById("square-btn").disabled = false;
     document.getElementById("poly-btn").disabled = false; 
@@ -217,6 +228,7 @@ function initInput(){
     temporalVertex =[];
     state = {};
     state["tools"] = tools[3];
+    document.getElementById("select-btn").disabled = false;
     document.getElementById("line-btn").disabled = false;
     document.getElementById("square-btn").disabled = true;
     document.getElementById("poly-btn").disabled = false; 
@@ -226,6 +238,7 @@ function initInput(){
     temporalVertex =[];
     state = {};
     state["tools"] = tools[4];
+    document.getElementById("select-btn").disabled = false;
     document.getElementById("line-btn").disabled = false;
     document.getElementById("square-btn").disabled = false;
     document.getElementById("poly-btn").disabled = true; 
@@ -251,6 +264,7 @@ function initInput(){
     // } else 
     if(!state.hasOwnProperty("draw")){ // idle state
       if(state["tools"] == tools[1]) {
+        document.getElementById("select-btn").disabled = true;
         document.getElementById("line-btn").disabled = false;
         document.getElementById("square-btn").disabled = false;
         document.getElementById("poly-btn").disabled = false; 

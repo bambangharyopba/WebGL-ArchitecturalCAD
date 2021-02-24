@@ -305,9 +305,20 @@ function initInput(){
       } else if(state["draw"] == "square"){
         let x = state["tempvertex"][0];
         let y = state["tempvertex"][1];
-        let d =  (Math.abs(mousePos.y - y) > Math.abs(mousePos.x - x)) ? mousePos.y - y : mousePos.x - x; 
+        let dx = mousePos.x - x;
+        let dy = mousePos.y - y;
+        let d =  (Math.abs(mousePos.y - y) > Math.abs(mousePos.x - x)) ? Math.abs(mousePos.y - y) : Math.abs(mousePos.x - x); 
         if(d != 0){
-          let vertices = [new Vertex(x,y), new Vertex(x, y + d), new Vertex(x + d, y + d), new Vertex(x + d, y)];
+          let vertices = [];
+          if(dx < 0 && dy < 0){
+            vertices = [new Vertex(x,y), new Vertex(x, y - d), new Vertex(x - d, y - d), new Vertex(x - d, y)];
+          } else if(dx < 0 && dy > 0){
+            vertices = [new Vertex(x,y), new Vertex(x, y + d), new Vertex(x - d, y + d), new Vertex(x - d, y)];
+          } else if(dx > 0 && dy < 0){
+            vertices = [new Vertex(x,y), new Vertex(x, y - d), new Vertex(x + d, y - d), new Vertex(x + d, y)];
+          } else {
+            vertices = [new Vertex(x,y), new Vertex(x, y + d), new Vertex(x + d, y + d), new Vertex(x + d, y)];
+          }
           let square = new Square(vertices);
           polygons.push(square);
           state["tools"] = tools[1];
@@ -401,8 +412,19 @@ function initInput(){
       else if(state["draw"] == "square"){
         let x = state["tempvertex"][0];
         let y = state["tempvertex"][1];
-        let d =  (Math.abs(mousePos.y - y) > Math.abs(mousePos.x - x)) ? mousePos.y - y : mousePos.x - x; 
-        let line = state["tempvertex"].concat([x, y + d, x + d, y + d, x + d, y]) 
+        let dx = mousePos.x - x;
+        let dy = mousePos.y - y;
+        let d =  (Math.abs(mousePos.y - y) > Math.abs(mousePos.x - x)) ? Math.abs(mousePos.y - y) : Math.abs(mousePos.x - x); 
+        let line = state["tempvertex"];
+        if(dx < 0 && dy < 0){
+          line = line.concat([x, y - d, x - d, y - d, x - d, y]) 
+        } else if(dx < 0 && dy > 0){
+          line = line.concat([x, y + d, x - d, y + d, x - d, y]) 
+        } else if(dx > 0 && dy < 0){
+          line = line.concat([x, y - d, x + d, y - d, x + d, y]) 
+        } else {
+          line = line.concat([x, y + d, x + d, y + d, x + d, y]) 
+        }
         console.log(line);
         renderLineLoop(line);
         render();
@@ -474,19 +496,29 @@ function initInput(){
           if(state["selected"] == "square"){
             let vert = polygons[idx].getVertices();
             let prevVidx = (state["vertex"] > 0) ? state["vertex"] - 1 : vert.length - 1;
-            let nextVidx = (state["vertex"] < vert.length - 1) ? state["vertex"] + 1 : 0;
+            let nextVidx = (state["vertex"] < vert.length - 1) ? state["vertex"] + 1 : 0;          
             let crossVidx = (state["vertex"] > 1) ? state["vertex"] - 2 : state["vertex"] + 2;
-            let prevX = vert[crossVidx].getCoordinate()[0];
-            let prevY = vert[crossVidx].getCoordinate()[1];
-            let d =  (Math.abs(mousePos.y - prevY) > Math.abs(mousePos.x - prevX)) ? mousePos.y - prevY : mousePos.x - prevX;
-            console.log(vert[crossVidx].getCoordinate()[0],vert[crossVidx].getCoordinate()[1]);
-            vert[state["vertex"]].setCoordinate(prevX+d, prevY+d);
-            if(state["vertex"] % 2 == 0){
-              vert[prevVidx].setCoordinate(vert[prevVidx].getCoordinate()[0], prevY+d);
-              vert[nextVidx].setCoordinate(prevX+d, vert[nextVidx].getCoordinate()[1]);
+            let crossX = vert[crossVidx].getCoordinate()[0];
+            let crossY = vert[crossVidx].getCoordinate()[1];
+            let dx = mousePos.x - crossX;
+            let dy = mousePos.y - crossY;
+            let d = (Math.abs(dy) > Math.abs(dx)) ? Math.abs(dx) : Math.abs(dy);
+            if(dx < 0 && dy < 0){
+              vert[state["vertex"]].setCoordinate(crossX - d, crossY - d );
+              vert[prevVidx].setCoordinate(crossX, crossY - d);
+              vert[nextVidx].setCoordinate(crossX - d, crossY);
+            } else if(dx < 0 && dy > 0){
+              vert[state["vertex"]].setCoordinate(crossX - d, crossY + d);
+              vert[prevVidx].setCoordinate(crossX - d, crossY);
+              vert[nextVidx].setCoordinate(crossX, crossY + d);
+            } else if(dx > 0 && dy < 0){
+              vert[state["vertex"]].setCoordinate(crossX + d, crossY - d);
+              vert[prevVidx].setCoordinate(crossX + d, crossY);
+              vert[nextVidx].setCoordinate(crossX, crossY - d);
             } else {
-              vert[nextVidx].setCoordinate(vert[nextVidx].getCoordinate()[0], prevY+d);
-              vert[prevVidx].setCoordinate(prevX+d, vert[prevVidx].getCoordinate()[1]);
+              vert[state["vertex"]].setCoordinate(crossX + d, crossY + d);
+              vert[prevVidx].setCoordinate(crossX, crossY + d);
+              vert[nextVidx].setCoordinate(crossX + d, crossY);
             }
           } else if(state["selected"] == "polygon"){
             let vert = polygons[idx].getVertices();

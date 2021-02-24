@@ -11,6 +11,7 @@ var polygons = [];
 var mode = 1;
 var temporalVertex = [];
 var temporalEdge = [];
+var mousePos;
 
 function initGL() {
   let canvas = document.querySelector('#webgl');
@@ -239,7 +240,6 @@ function initInput(){
   });
 
   gl.canvas.addEventListener("click", ev =>{
-    let mousePos = input().getMousePos(gl.canvas, ev);
     if(!state.hasOwnProperty("draw")){ // idle state
       if(state["tools"] == tools[1]) {
         document.getElementById("select-btn").disabled = true;
@@ -352,7 +352,6 @@ function initInput(){
   })
 
   gl.canvas.addEventListener("mousedown", ev => {
-    let mousePos = input().getMousePos(gl.canvas, ev);
     // clicking on vertex event
     if(state["tools"] == tools[1] && state["selected"] == "line" && state.hasOwnProperty("id")){ // line selected
       let idx = -1;
@@ -402,7 +401,11 @@ function initInput(){
   })
 
   gl.canvas.addEventListener("mousemove", ev => {
-    let mousePos = input().getMousePos(gl.canvas, ev);
+
+    let rect = gl.canvas.getBoundingClientRect();
+    mousePos = {x: ev.clientX - rect.left,
+                  y: ev.clientY - rect.top}
+
     if(state.hasOwnProperty("draw")){ // drawing state
       if(state["draw"] == "line"){
         let line = state["tempvertex"].concat([mousePos.x, mousePos.y]) 
@@ -531,7 +534,6 @@ function initInput(){
   })
 
   gl.canvas.addEventListener("mouseup", ev => {
-    let mousePos = input().getMousePos(gl.canvas, ev);
     if(state["tools"] == tools[1] && state["selected"] == "line" && state["dragvertex"]){
       delete state["dragvertex"];
       delete state["vertex"];

@@ -147,7 +147,6 @@ function initInput(){
           let vert = [];
           let rgb = [];
           for(let i = 0; i < token.length; i++){
-            console.log("token: " + token[i])
             if(token[i] == "Edge"){
               load_mode = 0;
             } else if(token[i] == "Square"){
@@ -155,8 +154,6 @@ function initInput(){
             } else if(token[i] == "Polygon"){
               load_mode = 2;
             } else if(token[i] == "}"){
-              console.log("vertices")
-              console.log(vert);
               if(load_mode == 0){
                 edges.push(new Edge(vert[0], vert[1]));
               } else if(load_mode == 1){
@@ -178,11 +175,8 @@ function initInput(){
                 rgb.push(parseFloat(value[2]));
               } else {
                 let coor = token[i].split(",");
-                console.log(coor);
                 var tex = new Vertex(parseInt(coor[0]), parseInt(coor[1]));
-                console.log(tex)
                 vert.push(tex);
-                console.log(vert);
               }
             }
           }
@@ -190,8 +184,6 @@ function initInput(){
 
         await thenedPromise;
 
-        console.log(edges);
-        console.log(polygons);
         render();
       })();
     }
@@ -263,7 +255,6 @@ function initInput(){
               state["selected"] = "square";
               found = true;
             } else {
-              console.log(polygons[i].getType())  
               state["selected"] = "polygon";
               found = true;
             }
@@ -347,8 +338,6 @@ function initInput(){
         render();
       }
     }
-    console.log(state);
-    console.log(temporalVertex);
   })
 
   gl.canvas.addEventListener("mousedown", ev => {
@@ -397,7 +386,6 @@ function initInput(){
       }
       render();
     }
-    console.log(state);
   })
 
   gl.canvas.addEventListener("mousemove", ev => {
@@ -428,7 +416,6 @@ function initInput(){
         } else {
           line = line.concat([x, y + d, x + d, y + d, x + d, y]) 
         }
-        console.log(line);
         renderLineLoop(line);
         render();
       }
@@ -601,7 +588,6 @@ function changeColor() {
       var red = parseInt(red = colorValue[0] + colorValue[1], 16) / 255.0;
       var green = parseInt(colorValue[2] + colorValue[3], 16) / 255.0;
       var blue = parseInt(colorValue[4] + colorValue[5], 16) / 255.0;
-      console.log("red" + red +"  Blue "+ blue + " Green: "+green);
       if ((red <= 1.0 && red >= 0.0) && (green <= 1.0 && green >= 0.0) && (blue <= 1.0 && blue >= 0.0)) {
         polygons[state["id"]].setColor(red, green, blue);
         render();
@@ -628,25 +614,6 @@ function download(data, filename, type) {
           window.URL.revokeObjectURL(url);  
       }, 0); 
   }
-}
-
-function randomInt(range) {
-  return Math.floor(Math.random() * range);
-}
-
-function setRectangle(gl, x, y, width, height) {
-  var x1 = x;
-  var x2 = x + width;
-  var y1 = y;
-  var y2 = y + height;
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-     x1, y1,
-     x2, y1,
-     x1, y2,
-     x1, y2,
-     x2, y1,
-     x2, y2,
-  ]), gl.STATIC_DRAW);
 }
 
 function help(){

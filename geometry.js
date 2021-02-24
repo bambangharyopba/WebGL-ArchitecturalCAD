@@ -1,6 +1,5 @@
 var vertexId = 0;
 var edgeId = 0;
-var faceId = 0;
 var polygonId = 0;
 
 function isInLine(x, y, v1, v2){

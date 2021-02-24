@@ -203,24 +203,58 @@ function initInput(){
     })();
   });
 
+  // TODO: Tools
+  document.getElementById("line-btn").addEventListener("click", function() {
+    temporalVertex =[];
+    state = {};
+    state["tools"] = tools[2];
+    document.getElementById("line-btn").disabled = true;
+    document.getElementById("square-btn").disabled = false;
+    document.getElementById("poly-btn").disabled = false; 
+    document.getElementById("status").innerHTML = "Status: Drawing Line";
+  });
+  document.getElementById("square-btn").addEventListener("click", function() {
+    temporalVertex =[];
+    state = {};
+    state["tools"] = tools[3];
+    document.getElementById("line-btn").disabled = false;
+    document.getElementById("square-btn").disabled = true;
+    document.getElementById("poly-btn").disabled = false; 
+    document.getElementById("status").innerHTML = "Status: Drawing Square";
+  });
+  document.getElementById("poly-btn").addEventListener("click", function() {
+    temporalVertex =[];
+    state = {};
+    state["tools"] = tools[4];
+    document.getElementById("line-btn").disabled = false;
+    document.getElementById("square-btn").disabled = false;
+    document.getElementById("poly-btn").disabled = true; 
+    document.getElementById("status").innerHTML = "Status: Drawing Polygon";
+  });
+
   gl.canvas.addEventListener("click", ev =>{
     let mousePos = input().getMousePos(gl.canvas, ev);
-    if(isOnTools(mousePos.x, mousePos.y)){
-      temporalVertex =[];
-      for(let i = 1; i < 5; i++){
-        if(state["tools"] == tools[i]){
-          if(i == 5 - 1){
-            state = {};
-            state["tools"] = tools[1];
-          } else{
-            state = {};
-            state["tools"] = tools[i + 1];
-          }
-          break;
-        }
-      }
-    } else if(!state.hasOwnProperty("draw")){ // idle state
+    // if(isOnTools(mousePos.x, mousePos.y)){
+    //   temporalVertex =[];
+    //   for(let i = 1; i < 5; i++){
+    //     if(state["tools"] == tools[i]){
+    //       if(i == 5 - 1){
+    //         state = {};
+    //         state["tools"] = tools[1];
+    //       } else{
+    //         state = {};
+    //         state["tools"] = tools[i + 1];
+    //       }
+    //       break;
+    //     }
+    //   }
+    // } else 
+    if(!state.hasOwnProperty("draw")){ // idle state
       if(state["tools"] == tools[1]) {
+        document.getElementById("line-btn").disabled = false;
+        document.getElementById("square-btn").disabled = false;
+        document.getElementById("poly-btn").disabled = false; 
+        document.getElementById("status").innerHTML = "Status: Select & Edit";
         let found = false;
         for(let i = 0; i < edges.length; i++){ // search coordinate in edges
           if(found) break;
@@ -451,14 +485,19 @@ function initInput(){
           if(state["selected"] == "square"){
             let vert = polygons[idx].getVertices();
             let prevVidx = (state["vertex"] > 0) ? state["vertex"] - 1 : vert.length - 1;
-            let nextVidx = (state["vertex"] < vert.length - 1) ? state["vertex"] + 1 : 0; 
-            vert[state["vertex"]].setCoordinate(mousePos.x, mousePos.y);
+            let nextVidx = (state["vertex"] < vert.length - 1) ? state["vertex"] + 1 : 0;
+            let crossVidx = (state["vertex"] > 1) ? state["vertex"] - 2 : state["vertex"] + 2;
+            let prevX = vert[crossVidx].getCoordinate()[0];
+            let prevY = vert[crossVidx].getCoordinate()[1];
+            let d =  (Math.abs(mousePos.y - prevY) > Math.abs(mousePos.x - prevX)) ? mousePos.y - prevY : mousePos.x - prevX;
+            console.log(vert[crossVidx].getCoordinate()[0],vert[crossVidx].getCoordinate()[1]);
+            vert[state["vertex"]].setCoordinate(prevX+d, prevY+d);
             if(state["vertex"] % 2 == 0){
-              vert[prevVidx].setCoordinate(vert[prevVidx].getCoordinate()[0], mousePos.y);
-              vert[nextVidx].setCoordinate(mousePos.x, vert[nextVidx].getCoordinate()[1]);
+              vert[prevVidx].setCoordinate(vert[prevVidx].getCoordinate()[0], prevY+d);
+              vert[nextVidx].setCoordinate(prevX+d, vert[nextVidx].getCoordinate()[1]);
             } else {
-              vert[nextVidx].setCoordinate(vert[nextVidx].getCoordinate()[0], mousePos.y);
-              vert[prevVidx].setCoordinate(mousePos.x, vert[prevVidx].getCoordinate()[1]);
+              vert[nextVidx].setCoordinate(vert[nextVidx].getCoordinate()[0], prevY+d);
+              vert[prevVidx].setCoordinate(prevX+d, vert[prevVidx].getCoordinate()[1]);
             }
           } else if(state["selected"] == "polygon"){
             let vert = polygons[idx].getVertices();

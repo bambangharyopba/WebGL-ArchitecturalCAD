@@ -132,65 +132,68 @@ function renderLineLoop(vertices){
 function initInput(){
   const fileSelector = document.getElementById('load');
   
+  
   fileSelector.addEventListener("change", (ev) => {
     const file = ev.target.files;
-    (async () => {
-      var thenedPromise = file[0].text().then(text => {
-        edges = [];
-        polygons = [];
-        let token = text.split("\n");
-        token = token.slice(0,token.length - 1);
-        let load_mode = 0;
-        let vert = [];
-        let rgb = [];
-        for(let i = 0; i < token.length; i++){
-          console.log("token: " + token[i])
-          if(token[i] == "Edge"){
-            load_mode = 0;
-          } else if(token[i] == "Square"){
-            load_mode = 1;
-          } else if(token[i] == "Polygon"){
-            load_mode = 2;
-          } else if(token[i] == "}"){
-            console.log("vertices")
-            console.log(vert);
-            if(load_mode == 0){
-              edges.push(new Edge(vert[0], vert[1]));
-            } else if(load_mode == 1){
-              var square = new Square(vert);
-              square.setColor(rgb[0], rgb[1], rgb[2]);
-              polygons.push(square);
-            } else if(load_mode == 2){
-              var polygon = new Polygon(vert);
-              polygon.setColor(rgb[0], rgb[1], rgb[2]);
-              polygons.push(polygon);
-            }
-            vert = [];
-            rgb = [];
-          } else if(token[i] != "{"){
-            let value = token[i].split(",");
-            if (value.length === 3) {
-              rgb.push(parseFloat(value[0]));
-              rgb.push(parseFloat(value[1]));
-              rgb.push(parseFloat(value[2]));
-            } else {
-              let coor = token[i].split(",");
-              console.log(coor);
-              var tex = new Vertex(parseInt(coor[0]), parseInt(coor[1]));
-              console.log(tex)
-              vert.push(tex);
+    if(file.length > 0){
+      (async () => {
+        var thenedPromise = file[0].text().then(text => {
+          edges = [];
+          polygons = [];
+          let token = text.split("\n");
+          token = token.slice(0,token.length - 1);
+          let load_mode = 0;
+          let vert = [];
+          let rgb = [];
+          for(let i = 0; i < token.length; i++){
+            console.log("token: " + token[i])
+            if(token[i] == "Edge"){
+              load_mode = 0;
+            } else if(token[i] == "Square"){
+              load_mode = 1;
+            } else if(token[i] == "Polygon"){
+              load_mode = 2;
+            } else if(token[i] == "}"){
+              console.log("vertices")
               console.log(vert);
+              if(load_mode == 0){
+                edges.push(new Edge(vert[0], vert[1]));
+              } else if(load_mode == 1){
+                var square = new Square(vert);
+                square.setColor(rgb[0], rgb[1], rgb[2]);
+                polygons.push(square);
+              } else if(load_mode == 2){
+                var polygon = new Polygon(vert);
+                polygon.setColor(rgb[0], rgb[1], rgb[2]);
+                polygons.push(polygon);
+              }
+              vert = [];
+              rgb = [];
+            } else if(token[i] != "{"){
+              let value = token[i].split(",");
+              if (value.length === 3) {
+                rgb.push(parseFloat(value[0]));
+                rgb.push(parseFloat(value[1]));
+                rgb.push(parseFloat(value[2]));
+              } else {
+                let coor = token[i].split(",");
+                console.log(coor);
+                var tex = new Vertex(parseInt(coor[0]), parseInt(coor[1]));
+                console.log(tex)
+                vert.push(tex);
+                console.log(vert);
+              }
             }
           }
-        }
-      });
+        });
 
-      await thenedPromise;
+        await thenedPromise;
 
-      console.log(edges);
-      console.log(polygons);
-      render();
-    })();
+        console.log(edges);
+        console.log(polygons);
+        render();
+      })();
+    }
   });
 
   // TODO: Tools
